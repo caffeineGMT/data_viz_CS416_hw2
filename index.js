@@ -12,7 +12,6 @@ class ToiletPaper {
   numPerRow = this.width / (this.squareSize + this.squarePad);
 
   svg = null;
-  g = null;
 
   activateFunctions = [];
   updateFunctions = [];
@@ -38,6 +37,8 @@ class ToiletPaper {
 
     // first slide
     this.showSquares();
+
+    this.setupClickHandlers();
   }
 
   setupCanvas = (selection) => {
@@ -144,6 +145,24 @@ class ToiletPaper {
       .style("font-size", 10)
       .attr("fill", "white")
       .attr("opacity", 0);
+  };
+
+  setupClickHandlers = () => {
+    this.activateFunctions.push(
+      this.showSquares,
+      this.expandGrid,
+      this.highlightGrid
+    );
+
+    document
+      .querySelector("#slide1")
+      .addEventListener("click", this.showSquares);
+    document
+      .querySelector("#slide2")
+      .addEventListener("click", this.expandGrid);
+    document
+      .querySelector("#slide3")
+      .addEventListener("click", this.highlightGrid);
   };
 
   /**

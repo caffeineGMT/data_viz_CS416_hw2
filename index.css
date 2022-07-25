@@ -15,15 +15,6 @@ body {
   padding-right: 100px;
 }
 
-span {
-  color: #ff6666;
-}
-
-circle {
-    fill: lightblue;
-    stroke: black;
-  }
-
 /* Home */
 #home {
   margin-top: 0;
@@ -84,11 +75,6 @@ circle {
   align-content: center;
 }
 
-.stick {
-  position: fixed;
-  top: 150px;
-}
-
 #vis .title {
   font-size: 4vw;
   text-anchor: middle;
@@ -109,155 +95,4 @@ circle {
 .highlight {
   fill: rgb(223, 150, 42);
   font-weight: bold;
-}
-
-/* Animal */
-#animal {
-  margin-top: 50px;
-}
-
-#animal h1 {
-  font-size: 4em;
-}
-
-#animal h4 {
-  color: #ff6666;
-}
-
-#animal .line-path {
-  fill: none;
-  stroke-linejoin: round;
-}
-
-#animal line {
-  fill: none;
-  stroke: #d8d8d8;
-  stroke-dasharray: 5, 3;
-  opacity: 0.2;
-  /* background-image: url(../public//image//doctor.jpg); */
-}
-
-/* Stock */
-#stock {
-  margin-top: 100px;
-}
-
-/* https://coderwall.com/p/hkgamw/creating-full-width-100-container-inside-fixed-width-container */
-#stock .row-full {
-  width: 100vw;
-  position: relative;
-  margin-left: -50vw;
-  left: 50%;
-}
-
-#stock h1 {
-  font-size: 4em;
-  text-align: left;
-}
-
-#stock text {
-  font-size: 0.5vw;
-}
-
-/* CO2 */
-
-#co2 h1 {
-  font-size: 4em;
-  text-align: left;
-}
-
-/* Vertical Navigation Bar*/
-#cd-vertical-nav a {
-  color: #ffffff;
-  text-decoration: none;
-}
-
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-#cd-vertical-nav {
-  position: fixed;
-  left: 20px;
-  top: 50%;
-  bottom: auto;
-  -webkit-transform: translateY(-50%);
-  -moz-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  -o-transform: translateY(-50%);
-  transform: translateY(-50%);
-  z-index: 1;
-}
-
-#cd-vertical-nav li {
-  text-align: left;
-}
-
-#cd-vertical-nav a {
-  display: inline-block;
-  /* prevent weird movements on hover when you use a CSS3 transformation - webkit browsers */
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-#cd-vertical-nav a {
-  display: inline-block;
-  /* prevent weird movements on hover when you use a CSS3 transformation - webkit browsers */
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-#cd-vertical-nav a:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-#cd-vertical-nav a span {
-  float: left;
-  display: inline-block;
-  -webkit-transform: scale(0.6);
-  -moz-transform: scale(0.6);
-  -ms-transform: scale(0.6);
-  -o-transform: scale(0.6);
-  transform: scale(0.6);
-}
-
-#cd-vertical-nav a:hover span {
-  -webkit-transform: scale(1);
-  -moz-transform: scale(1);
-  -ms-transform: scale(1);
-  -o-transform: scale(1);
-  transform: scale(1);
-  opacity: 0.8;
-}
-#cd-vertical-nav a:hover .cd-label {
-  opacity: 1;
-  z-index: 0;
-}
-
-#cd-vertical-nav a.is-selected .cd-dot {
-  background-color: white;
-  opacity: 1;
-}
-
-.cd-dot {
-  position: relative;
-  /* we set a top value in order to align the dot with the label. If you change label's font, you may need to change this top value*/
-  top: 8px;
-  height: 12px;
-  width: 12px;
-  border-radius: 50%;
-  background-color: #ffffff;
-  -webkit-transition: -webkit-transform 0.2s, background-color 0.5s;
-  -moz-transition: -moz-transform 0.2s, background-color 0.5s;
-  transition: transform 0.2s, background-color 0.5s;
-  -webkit-transform-origin: 50% 50%;
-  -moz-transform-origin: 50% 50%;
-  -ms-transform-origin: 50% 50%;
-  -o-transform-origin: 50% 50%;
-  transform-origin: 50% 50%;
-  opacity: 0.1;
 }

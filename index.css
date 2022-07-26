@@ -8,6 +8,13 @@ body {
   scroll-behavior: smooth;
 }
 
+#buttons {
+  margin: auto;
+  width: 50%;
+  text-align: center;
+  padding-top: 1%;
+}
+
 .container-fluid {
   margin-top: 15vh;
   margin-bottom: 15vh;

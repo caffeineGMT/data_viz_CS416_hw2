@@ -35,7 +35,7 @@ class ToiletPaper {
     this.setupCanvas(d3.select("#root"));
     this.generateRolls();
     this.setupGrid();
-    this.setupClickHandlers();
+    this.setupButtons();
 
     // first slide
     this.showSquares();
@@ -47,8 +47,8 @@ class ToiletPaper {
       .attr("height", this.height + this.margin.top + this.margin.bottom)
       .attr(
         "transform",
-        `translate(${(window.innerWidth * 1.0) / 2 - this.width * 1.0}, ${
-          (window.innerHeight * 1.0) / 2 - (this.height * 1.0) / 2
+        `translate(${window.innerWidth / 2 - this.width / 2}, ${
+          window.innerHeight / 2 - this.height / 2
         })`
       )
       .append("g");
@@ -152,12 +152,12 @@ class ToiletPaper {
       .text((d) => d)
       .attr("x", (_, i) => i * this.squareSize * 6)
       .attr("y", 0)
-      .style("font-size", 10)
+      .style("font-size", this.squareSize)
       .attr("fill", "white")
       .attr("opacity", 0);
   };
 
-  setupClickHandlers = () => {
+  setupButtons = () => {
     this.activateFunctions.push(
       this.showSquares,
       this.expandGrid,

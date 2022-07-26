@@ -112,7 +112,7 @@ class ToiletPaper {
       "#f69324", // orange
     ]);
 
-    let squares = this.canvas
+    const squares = this.canvas
       .append("g")
       .attr("transform", `translate(${0}, ${5 * this.squareSize})`)
       .selectAll(".square")
@@ -255,7 +255,7 @@ class ToiletPaper {
 
 // driver function
 function main() {
-  let tp = new ToiletPaper();
+  const tp = new ToiletPaper();
   tp.init();
 }
 

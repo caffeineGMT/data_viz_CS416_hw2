@@ -1,17 +1,18 @@
 import * as d3 from "https://cdn.skypack.dev/d3@7";
 
 class ToiletPaper {
-  width = window.innerWidth;
-  height = window.innerHeight;
+  width = (window.innerWidth * 1.0) / 4;
+  height = this.width;
   margin = { top: 10, left: 10, bottom: 10, right: 10 };
   lastIndex = -1;
   activeIndex = 0;
 
   squareSize = window.innerWidth / 200;
-  squarePad = this.squareSize;
-  numPerRow = this.width / (this.squareSize + this.squarePad);
+  squarePadding = this.squareSize;
+  numPerRow = this.width / (this.squareSize + this.squarePadding);
 
   svg = null;
+  canvas = null;
 
   activateFunctions = [];
   updateFunctions = [];
@@ -34,17 +35,24 @@ class ToiletPaper {
     this.setupCanvas(d3.select("#root"));
     this.generateRolls();
     this.setupGrid();
+    this.setupClickHandlers();
 
     // first slide
     this.showSquares();
-
-    this.setupClickHandlers();
   }
 
   setupCanvas = (selection) => {
     this.svg = selection
       .attr("width", this.width + this.margin.left + this.margin.right)
-      .attr("height", this.height + this.margin.top + this.margin.bottom);
+      .attr("height", this.height + this.margin.top + this.margin.bottom)
+      .attr(
+        "transform",
+        `translate(${(window.innerWidth * 1.0) / 2 - this.width * 1.0}, ${
+          (window.innerHeight * 1.0) / 2 - (this.height * 1.0) / 2
+        })`
+      )
+      .append("g");
+    this.canvas = d3.select("g");
   };
 
   generateRolls = () => {
@@ -59,8 +67,8 @@ class ToiletPaper {
     this.rollsProcessed.map((d, i) => {
       d.col = i % this.numPerRow;
       d.row = Math.floor(i / this.numPerRow);
-      d.x = d.col * (this.squareSize + this.squarePad);
-      d.y = d.row * (this.squareSize + this.squarePad);
+      d.x = d.col * (this.squareSize + this.squarePadding);
+      d.y = d.row * (this.squareSize + this.squarePadding);
       return d;
     });
   };
@@ -104,9 +112,9 @@ class ToiletPaper {
       "#f69324", // orange
     ]);
 
-    let squares = this.svg
+    let squares = this.canvas
       .append("g")
-      .attr("transform", `translate(${this.margin.left}, ${this.margin.top})`)
+      .attr("transform", `translate(${0}, ${5 * this.squareSize})`)
       .selectAll(".square")
       .data(this.rollsProcessed)
       .enter()
@@ -119,7 +127,8 @@ class ToiletPaper {
       .attr("y", (d) => d.y)
       .attr("opacity", 0);
 
-    const legend = this.svg
+    const legend = this.canvas
+      .append("g")
       .selectAll(".legend")
       .data(countryList)
       .enter()
@@ -128,20 +137,21 @@ class ToiletPaper {
       .attr("width", this.squareSize)
       .attr("height", this.squareSize)
       .attr("fill", (d) => this.colorScale(d))
-      .attr("x", (d, i) => i * this.squareSize * 6)
+      .attr("x", (_, i) => i * this.squareSize * 6)
       .attr("y", 0)
       .attr("opacity", 0);
 
-    const legendText = this.svg
+    const legendText = this.canvas
+      .append("g")
+      .attr("transform", `translate(0, ${3 * this.squareSize})`)
       .selectAll(".legend-text")
       .data(countryList)
       .enter()
       .append("text")
       .attr("class", "legend-text")
       .text((d) => d)
-      .attr("x", (d, i) => i * this.squareSize * 6)
+      .attr("x", (_, i) => i * this.squareSize * 6)
       .attr("y", 0)
-      .attr("transform", `translate(0, ${this.squareSize + 15})`)
       .style("font-size", 10)
       .attr("fill", "white")
       .attr("opacity", 0);

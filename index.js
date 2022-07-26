@@ -18,7 +18,7 @@ class ToiletPaper {
   updateFunctions = [];
 
   // data: https://www.statista.com/chart/15676/cmo-toilet-paper-consumption/
-  rollsRaw = [
+  rollsRawData = [
     { Country: "US", Rolls: 141 },
     { Country: "Germany", Rolls: 134 },
     { Country: "UK", Rolls: 127 },
@@ -56,15 +56,20 @@ class ToiletPaper {
   };
 
   generateRolls = () => {
-    this.rollsProcessed = [];
-    this.rollsRaw.forEach((d, _) => {
+    function Roll(country, col, row, x, y) {
+      this.Country = country;
+      this.col = col;
+      this.row = row;
+      this.x = x;
+      this.y = y;
+    }
+    this.rollsProcessedData = [];
+    this.rollsRawData.forEach((d, _) => {
       for (let count = 0; count < d.Rolls; count++) {
-        this.rollsProcessed.push({
-          Country: d.Country,
-        });
+        this.rollsProcessedData.push(new Roll(d.Country));
       }
     });
-    this.rollsProcessed.map((d, i) => {
+    this.rollsProcessedData.map((d, i) => {
       d.col = i % this.numPerRow;
       d.row = Math.floor(i / this.numPerRow);
       d.x = d.col * (this.squareSize + this.squarePadding);
@@ -74,18 +79,7 @@ class ToiletPaper {
   };
 
   setupGrid = () => {
-    const countryList = [
-      "US",
-      "Germany",
-      "UK",
-      "Japan",
-      "Australia",
-      "Spain",
-      "France",
-      "Italy",
-      "China",
-      "Brazil",
-    ];
+    const countryList = this.rollsRawData.map((item) => item.Country);
 
     this.colorScale = d3.scaleOrdinal().domain(countryList).range([
       // "#ab2668", // purple
@@ -116,7 +110,7 @@ class ToiletPaper {
       .append("g")
       .attr("transform", `translate(${0}, ${5 * this.squareSize})`)
       .selectAll(".square")
-      .data(this.rollsProcessed)
+      .data(this.rollsProcessedData)
       .enter()
       .append("rect")
       .classed("square", true)
@@ -160,7 +154,7 @@ class ToiletPaper {
   setupButtons = () => {
     this.activateFunctions.push(
       this.showSquares,
-      this.expandGrid,
+      this.expandGridHorizontally,
       this.highlightGrid
     );
 
@@ -169,10 +163,16 @@ class ToiletPaper {
       .addEventListener("click", this.showSquares);
     document
       .querySelector("#slide2")
-      .addEventListener("click", this.expandGrid);
+      .addEventListener("click", this.expandGridHorizontally);
     document
       .querySelector("#slide3")
       .addEventListener("click", this.highlightGrid);
+    document
+      .querySelector("#slide4")
+      .addEventListener("click", this.shrinkGridDiagonally);
+    document
+      .querySelector("#slide5")
+      .addEventListener("click", this.expandGridDiagonally);
   };
 
   /**
@@ -202,7 +202,7 @@ class ToiletPaper {
   /**
    * 2nd slide
    */
-  expandGrid = () => {
+  expandGridHorizontally = () => {
     // show cur
     this.svg
       .selectAll(".square")
@@ -250,6 +250,52 @@ class ToiletPaper {
       .attr("fill", (d) =>
         d.Country === "US" ? this.colorScale("US") : "lightgrey"
       );
+  };
+
+  /**
+   * 4th slide
+   */
+  shrinkGridDiagonally = () => {
+    // show cur
+    this.svg
+      .selectAll(".square")
+      .transition()
+      .duration(600)
+      .delay((d) => 5 * (d.row + d.col))
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("fill", "#84bc41")
+      .attr("opacity", 1.0);
+
+    this.svg.selectAll(".legend").transition().duration(600).attr("opacity", 1);
+    this.svg
+      .selectAll(".legend-text")
+      .transition()
+      .duration(600)
+      .attr("opacity", 1);
+  };
+
+  /**
+   * 4th slide
+   */
+  expandGridDiagonally = () => {
+    // show cur
+    this.svg
+      .selectAll(".square")
+      .transition()
+      .duration(600)
+      .delay((d) => 5 * (d.row + d.col))
+      .attr("x", (d) => d.x)
+      .attr("y", (d) => d.y)
+      .attr("fill", "#84bc41")
+      .attr("opacity", 1.0);
+
+    this.svg.selectAll(".legend").transition().duration(600).attr("opacity", 1);
+    this.svg
+      .selectAll(".legend-text")
+      .transition()
+      .duration(600)
+      .attr("opacity", 1);
   };
 }
 

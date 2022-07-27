@@ -2,7 +2,8 @@ import * as d3 from "https://cdn.skypack.dev/d3@7";
 
 class ToiletPaper {
   width = (window.innerWidth * 1.0) / 4;
-  height = this.width;
+  height = this.width * 1.7;
+  mainTextAreaWidth = 100;
   margin = { top: 10, left: 10, bottom: 10, right: 10 };
   lastIndex = -1;
   activeIndex = 0;
@@ -13,11 +14,13 @@ class ToiletPaper {
 
   svg = null;
   canvas = null;
+  mainTextArea = null;
 
   activateFunctions = [];
   updateFunctions = [];
 
   // data: https://www.statista.com/chart/15676/cmo-toilet-paper-consumption/
+  // https://www.qssupplies.co.uk/world-toilet-paper-consumed-visualised.html
   rollsRawData = [
     { Country: "US", Rolls: 141 },
     { Country: "Germany", Rolls: 134 },
@@ -28,31 +31,39 @@ class ToiletPaper {
     { Country: "France", Rolls: 71 },
     { Country: "Italy", Rolls: 70 },
     { Country: "China", Rolls: 49 },
-    { Country: "Brazil", Rolls: 38 },
+    // { Country: "Brazil", Rolls: 38 },
   ];
 
   init() {
+    // init everything
     this.setupCanvas(d3.select("#root"));
     this.generateRolls();
     this.setupGrid();
     this.setupButtons();
 
-    // first slide
+    // show first slide
     this.showSquares();
   }
 
   setupCanvas = (selection) => {
     this.svg = selection
       .attr("width", this.width + this.margin.left + this.margin.right)
-      .attr("height", this.height + this.margin.top + this.margin.bottom)
+      .attr(
+        "height",
+        this.height +
+          this.margin.top +
+          this.margin.bottom +
+          this.mainTextAreaWidth
+      )
       .attr(
         "transform",
         `translate(${window.innerWidth / 2 - this.width / 2}, ${
           window.innerHeight / 2 - this.height / 2
         })`
       )
-      .append("g");
-    this.canvas = d3.select("g");
+      .append("g")
+      .attr("id", "canvas");
+    this.canvas = d3.select("#canvas");
   };
 
   generateRolls = () => {
@@ -179,7 +190,6 @@ class ToiletPaper {
    * 1st slide
    */
   showSquares = () => {
-    // show cur
     this.svg
       .selectAll(".square")
       .transition()
@@ -197,13 +207,24 @@ class ToiletPaper {
       .transition()
       .duration(1000)
       .attr("opacity", 1);
+
+    this.svg.select("#mainTextArea").remove();
+    this.mainTextArea = this.svg
+      .append("text")
+      .text("The US is taking a lead on toilet paper consumption per capita")
+      .attr("id", "mainTextArea")
+      .attr("transform", `translate(${this.width / 8}, ${this.height / 1.05})`)
+      .style("font-size", this.squareSize * 1.5)
+      .attr("fill", "white")
+      .transition()
+      .duration(1000)
+      .attr("opacity", 1);
   };
 
   /**
    * 2nd slide
    */
   expandGridHorizontally = () => {
-    // show cur
     this.svg
       .selectAll(".square")
       .transition()
@@ -219,6 +240,20 @@ class ToiletPaper {
       .selectAll(".legend-text")
       .transition()
       .duration(600)
+      .attr("opacity", 1);
+
+    this.svg.select("#mainTextArea").remove();
+    this.mainTextArea = this.svg
+      .append("text")
+      .text(
+        "If each square represents a roll, the US uses 141 rolls per capita per year"
+      )
+      .attr("id", "mainTextArea")
+      .attr("transform", `translate(${0}, ${this.height / 1.05})`)
+      .style("font-size", this.squareSize * 1.5)
+      .attr("fill", "white")
+      .transition()
+      .duration(1000)
       .attr("opacity", 1);
   };
 
@@ -250,13 +285,24 @@ class ToiletPaper {
       .attr("fill", (d) =>
         d.Country === "US" ? this.colorScale("US") : "lightgrey"
       );
+
+    this.svg.select("#mainTextArea").remove();
+    this.mainTextArea = this.svg
+      .append("text")
+      .text("And the US represents 1/4 of the top 9 countries")
+      .attr("id", "mainTextArea")
+      .attr("transform", `translate(${this.width / 6}, ${this.height / 1.05})`)
+      .style("font-size", this.squareSize * 1.5)
+      .attr("fill", "white")
+      .transition()
+      .duration(1000)
+      .attr("opacity", 1);
   };
 
   /**
    * 4th slide
    */
   shrinkGridDiagonally = () => {
-    // show cur
     this.svg
       .selectAll(".square")
       .transition()
@@ -267,16 +313,33 @@ class ToiletPaper {
       .attr("fill", "#84bc41")
       .attr("opacity", 1.0);
 
+    // 250k is 1 square, need 31,114,249
+
     this.svg.selectAll(".legend").transition().duration(600).attr("opacity", 1);
     this.svg
       .selectAll(".legend-text")
       .transition()
       .duration(600)
       .attr("opacity", 1);
+
+    this.svg.select("#mainTextArea").remove();
+    this.mainTextArea = this.svg
+      .append("text")
+      .text("If 1 square represents 250k trees")
+      .attr("id", "mainTextArea")
+      .attr(
+        "transform",
+        `translate(${this.width / 3.5}, ${this.height / 1.05})`
+      )
+      .style("font-size", this.squareSize * 1.5)
+      .attr("fill", "white")
+      .transition()
+      .duration(1000)
+      .attr("opacity", 1);
   };
 
   /**
-   * 4th slide
+   * 5th slide
    */
   expandGridDiagonally = () => {
     // show cur
@@ -295,6 +358,18 @@ class ToiletPaper {
       .selectAll(".legend-text")
       .transition()
       .duration(600)
+      .attr("opacity", 1);
+
+    this.svg.select("#mainTextArea").remove();
+    this.mainTextArea = this.svg
+      .append("text")
+      .text("Then the US needs 31,114,249 trees per year for toilet papers")
+      .attr("id", "mainTextArea")
+      .attr("transform", `translate(${this.width / 8}, ${this.height / 1.05})`)
+      .style("font-size", this.squareSize * 1.5)
+      .attr("fill", "white")
+      .transition()
+      .duration(1000)
       .attr("opacity", 1);
   };
 }

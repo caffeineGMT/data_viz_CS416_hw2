@@ -122,7 +122,7 @@ class ToiletPaper {
       "#f69324", // orange
     ]);
 
-    var tooltip = d3
+    this.tooltip = d3
       .select("body")
       .append("div")
       .attr("class", "tooltip")
@@ -141,29 +141,7 @@ class ToiletPaper {
       .attr("fill", (d) => this.colorScale(d.Country))
       .attr("x", (d) => d.x)
       .attr("y", (d) => d.y)
-      .attr("opacity", 0)
-      .on("mouseenter", (event, curData) => {
-        d3.selectAll(".square")
-          .transition()
-          .duration(0)
-          .attr("opacity", (d) => {
-            return d.Country != curData.Country ? 0.2 : 1;
-          });
-        // tooltip.style("opacity", 0);
-      })
-      .on("mouseover", (event, curData) => {
-        const [x, y] = d3.pointer(event);
-        // tooltip
-        //   .style("opacity", 1)
-        //   .style("left", x)
-        //   .style("top", y)
-        //   .text(curData.Country);
-      })
-      .on("mouseout", function (event, curData) {
-        d3.selectAll(".square").transition().duration(250).attr("opacity", 1);
-        // svg.selectAll("#tooltip").remove();
-        // tooltip.style("opacity", 0);
-      });
+      .attr("opacity", 0);
 
     const legend = this.canvas
       .append("g")
@@ -243,7 +221,7 @@ class ToiletPaper {
       .duration(1000)
       .attr("opacity", 1);
 
-    this.svg.select("#mainTextArea").remove();
+    this.svg.selectAll("#mainTextArea").remove();
     this.mainTextArea = this.svg
       .append("text")
       .text("The US is taking a lead on toilet paper consumption per capita")
@@ -279,7 +257,7 @@ class ToiletPaper {
       .duration(600)
       .attr("opacity", 1);
 
-    this.svg.select("#mainTextArea").remove();
+    this.svg.selectAll("#mainTextArea").remove();
     this.mainTextArea = this.svg
       .append("text")
       .text(
@@ -292,7 +270,27 @@ class ToiletPaper {
       .transition()
       .duration(1000)
       .attr("opacity", 1);
-
+    this.svg
+      .append("text")
+      .text(
+        "(Hover over to see miles of toilet paper usage per capita in lifetime)"
+      )
+      .attr("id", "mainTextArea")
+      .attr("transform", `translate(${this.width / 20}, ${this.height / 1.1})`)
+      .style("font-size", this.squareSize * 1.5)
+      .attr("fill", "white")
+      .transition()
+      .duration(1000)
+      .attr("opacity", 1);
+    // { Country: "US", Rolls: 141 },
+    // { Country: "Germany", Rolls: 134 },
+    // { Country: "UK", Rolls: 127 },
+    // { Country: "Japan", Rolls: 91 },
+    // { Country: "Australia", Rolls: 88 },
+    // { Country: "Spain", Rolls: 81 },
+    // { Country: "France", Rolls: 71 },
+    // { Country: "Italy", Rolls: 70 },
+    // { Country: "China", Rolls: 49 },
     d3.selectAll(".square")
       .on("mouseenter", (event, curData) => {
         d3.selectAll(".square")
@@ -301,20 +299,49 @@ class ToiletPaper {
           .attr("opacity", (d) => {
             return d.Country != curData.Country ? 0.2 : 1;
           });
-        // tooltip.style("opacity", 0);
+        d3.select(".tooltip").style("opacity", 1);
       })
       .on("mouseover", (event, curData) => {
+        let mile = 0;
+        switch (curData.Country) {
+          case "US":
+            mile = 633.78;
+            break;
+          case "Germany":
+            mile = 623.4;
+            break;
+          case "UK":
+            mile = 590.04;
+            break;
+          case "Japan":
+            mile = 439.64;
+            break;
+          case "Australia":
+            mile = 419.7;
+            break;
+          case "Spain":
+            mile = 386.54;
+            break;
+          case "France":
+            mile = 335.35;
+            break;
+          case "Italy":
+            mile = 334.13;
+            break;
+          case "China":
+            mile = 215.68;
+            break;
+        }
         const [x, y] = d3.pointer(event);
-        // tooltip
-        //   .style("opacity", 1)
-        //   .style("left", x)
-        //   .style("top", y)
-        //   .text(curData.Country);
+        d3.select(".tooltip")
+          .style("opacity", 1)
+          .style("x", x)
+          .style("y", y)
+          .text(`${curData.Country} - ${mile} miles`);
       })
       .on("mouseout", function (event, curData) {
         d3.selectAll(".square").transition().duration(250).attr("opacity", 1);
-        // svg.selectAll("#tooltip").remove();
-        // tooltip.style("opacity", 0);
+        d3.select(".tooltip").style("opacity", 0);
       });
   };
 
@@ -358,7 +385,7 @@ class ToiletPaper {
         d.Country === "US" ? this.colorScale("US") : "lightgrey"
       );
 
-    this.svg.select("#mainTextArea").remove();
+    this.svg.selectAll("#mainTextArea").remove();
     this.mainTextArea = this.svg
       .append("text")
       .text(
@@ -383,20 +410,27 @@ class ToiletPaper {
             }
             return d.Country === "US" ? 0.2 : 1;
           });
-        // tooltip.style("opacity", 0);
+        d3.select(".tooltip").style("opacity", 1);
       })
       .on("mouseover", (event, curData) => {
         const [x, y] = d3.pointer(event);
-        // tooltip
-        //   .style("opacity", 1)
-        //   .style("left", x)
-        //   .style("top", y)
-        //   .text(curData.Country);
+        let numOfRolls =
+          curData.Country === "US"
+            ? 141
+            : Math.round((141 * 100) / this.calcPercentage());
+        let text =
+          curData.Country === "US"
+            ? `US - ${numOfRolls} rolls`
+            : `The rest of the 9 countries - ${numOfRolls} rolls`;
+        d3.select(".tooltip")
+          .style("opacity", 1)
+          .style("left", x)
+          .style("top", y)
+          .text(text);
       })
       .on("mouseout", function (event, curData) {
         d3.selectAll(".square").transition().duration(250).attr("opacity", 1);
-        // svg.selectAll("#tooltip").remove();
-        // tooltip.style("opacity", 0);
+        d3.select(".tooltip").style("opacity", 0);
       });
   };
 
@@ -427,7 +461,7 @@ class ToiletPaper {
       .duration(600)
       .attr("opacity", 1);
 
-    this.svg.select("#mainTextArea").remove();
+    this.svg.selectAll("#mainTextArea").remove();
     this.mainTextArea = this.svg
       .append("text")
       .text("If 1 square represents 250k trees")
@@ -466,7 +500,7 @@ class ToiletPaper {
       .duration(600)
       .attr("opacity", 1);
 
-    this.svg.select("#mainTextArea").remove();
+    this.svg.selectAll("#mainTextArea").remove();
     this.mainTextArea = this.svg
       .append("text")
       .text("Then the US needs 31,114,249 trees per year for toilet papers")

@@ -123,10 +123,8 @@ class ToiletPaper {
     ]);
 
     this.tooltip = d3
-      .select("body")
-      .append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0);
+      .select(".tooltip")
+      .attr("transform", `translate(${this.width}, ${this.height})`);
 
     const squares = this.canvas
       .append("g")
@@ -337,6 +335,7 @@ class ToiletPaper {
           .style("opacity", 1)
           .style("x", x)
           .style("y", y)
+          // .style("position", "absolute")
           .text(`${curData.Country} - ${mile} miles`);
       })
       .on("mouseout", function (event, curData) {

@@ -80,6 +80,7 @@ class ToiletPaper {
         this.rollsProcessedData.push(new Roll(d.Country));
       }
     });
+
     this.rollsProcessedData.map((d, i) => {
       d.col = i % this.numPerRow;
       d.row = Math.floor(i / this.numPerRow);
@@ -87,6 +88,10 @@ class ToiletPaper {
       d.y = d.row * (this.squareSize + this.squarePadding);
       return d;
     });
+
+    this.numOfCol = this.numPerRow;
+    this.numOfRow =
+      this.rollsProcessedData[this.rollsProcessedData.length - 1].row;
   };
 
   setupGrid = () => {
@@ -117,6 +122,12 @@ class ToiletPaper {
       "#f69324", // orange
     ]);
 
+    var tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
     const squares = this.canvas
       .append("g")
       .attr("transform", `translate(${0}, ${5 * this.squareSize})`)
@@ -130,7 +141,29 @@ class ToiletPaper {
       .attr("fill", (d) => this.colorScale(d.Country))
       .attr("x", (d) => d.x)
       .attr("y", (d) => d.y)
-      .attr("opacity", 0);
+      .attr("opacity", 0)
+      .on("mouseenter", (event, curData) => {
+        d3.selectAll(".square")
+          .transition()
+          .duration(0)
+          .attr("opacity", (d) => {
+            return d.Country != curData.Country ? 0.2 : 1;
+          });
+        // tooltip.style("opacity", 0);
+      })
+      .on("mouseover", (event, curData) => {
+        const [x, y] = d3.pointer(event);
+        // tooltip
+        //   .style("opacity", 1)
+        //   .style("left", x)
+        //   .style("top", y)
+        //   .text(curData.Country);
+      })
+      .on("mouseout", function (event, curData) {
+        d3.selectAll(".square").transition().duration(250).attr("opacity", 1);
+        // svg.selectAll("#tooltip").remove();
+        // tooltip.style("opacity", 0);
+      });
 
     const legend = this.canvas
       .append("g")
@@ -190,6 +223,8 @@ class ToiletPaper {
    * 1st slide
    */
   showSquares = () => {
+    d3.selectAll("rect").attr("pointer-events", "none");
+
     this.svg
       .selectAll(".square")
       .transition()
@@ -225,6 +260,8 @@ class ToiletPaper {
    * 2nd slide
    */
   expandGridHorizontally = () => {
+    d3.selectAll("rect").attr("pointer-events", "all");
+
     this.svg
       .selectAll(".square")
       .transition()
@@ -255,12 +292,47 @@ class ToiletPaper {
       .transition()
       .duration(1000)
       .attr("opacity", 1);
+
+    d3.selectAll(".square")
+      .on("mouseenter", (event, curData) => {
+        d3.selectAll(".square")
+          .transition()
+          .duration(0)
+          .attr("opacity", (d) => {
+            return d.Country != curData.Country ? 0.2 : 1;
+          });
+        // tooltip.style("opacity", 0);
+      })
+      .on("mouseover", (event, curData) => {
+        const [x, y] = d3.pointer(event);
+        // tooltip
+        //   .style("opacity", 1)
+        //   .style("left", x)
+        //   .style("top", y)
+        //   .text(curData.Country);
+      })
+      .on("mouseout", function (event, curData) {
+        d3.selectAll(".square").transition().duration(250).attr("opacity", 1);
+        // svg.selectAll("#tooltip").remove();
+        // tooltip.style("opacity", 0);
+      });
   };
 
   /**
    * 3rd slide
    */
+  calcPercentage = () => {
+    let sum = 0;
+    this.rollsRawData.forEach((v, i) => {
+      sum += v.Rolls;
+    });
+
+    return Math.round((141 / sum) * 100);
+  };
+
   highlightGrid = () => {
+    d3.selectAll("rect").attr("pointer-events", "all");
+
     this.svg
       .selectAll(".square")
       .transition()
@@ -289,7 +361,9 @@ class ToiletPaper {
     this.svg.select("#mainTextArea").remove();
     this.mainTextArea = this.svg
       .append("text")
-      .text("And the US represents 1/4 of the top 9 countries")
+      .text(
+        `And the US represents ${this.calcPercentage()}% of the top 9 countries`
+      )
       .attr("id", "mainTextArea")
       .attr("transform", `translate(${this.width / 6}, ${this.height / 1.05})`)
       .style("font-size", this.squareSize * 1.5)
@@ -297,23 +371,54 @@ class ToiletPaper {
       .transition()
       .duration(1000)
       .attr("opacity", 1);
+
+    d3.selectAll(".square")
+      .on("mouseenter", (event, curData) => {
+        d3.selectAll(".square")
+          .transition()
+          .duration(0)
+          .attr("opacity", (d) => {
+            if (curData.Country === "US") {
+              return d.Country !== "US" ? 0.2 : 1;
+            }
+            return d.Country === "US" ? 0.2 : 1;
+          });
+        // tooltip.style("opacity", 0);
+      })
+      .on("mouseover", (event, curData) => {
+        const [x, y] = d3.pointer(event);
+        // tooltip
+        //   .style("opacity", 1)
+        //   .style("left", x)
+        //   .style("top", y)
+        //   .text(curData.Country);
+      })
+      .on("mouseout", function (event, curData) {
+        d3.selectAll(".square").transition().duration(250).attr("opacity", 1);
+        // svg.selectAll("#tooltip").remove();
+        // tooltip.style("opacity", 0);
+      });
   };
 
   /**
    * 4th slide
    */
   shrinkGridDiagonally = () => {
+    d3.selectAll("rect").attr("pointer-events", "none");
+
     this.svg
       .selectAll(".square")
       .transition()
       .duration(600)
       .delay((d) => 5 * (d.row + d.col))
-      .attr("x", 0)
-      .attr("y", 0)
+      .attr(
+        "x",
+        (this.numOfCol / 2) * (this.squareSize + this.squarePadding) -
+          this.squarePadding
+      )
+      .attr("y", (this.numOfRow / 2) * (this.squareSize + this.squarePadding))
       .attr("fill", "#84bc41")
       .attr("opacity", 1.0);
-
-    // 250k is 1 square, need 31,114,249
 
     this.svg.selectAll(".legend").transition().duration(600).attr("opacity", 1);
     this.svg
@@ -342,7 +447,8 @@ class ToiletPaper {
    * 5th slide
    */
   expandGridDiagonally = () => {
-    // show cur
+    d3.selectAll("rect").attr("pointer-events", "none");
+
     this.svg
       .selectAll(".square")
       .transition()

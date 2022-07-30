@@ -428,7 +428,7 @@ class ToiletPaper {
         let text =
           curData.Country === "US"
             ? `US - ${numOfRolls} rolls`
-            : `The rest of the 9 countries - ${numOfRolls} rolls`;
+            : `The rest of the 8 countries - ${numOfRolls} rolls`;
         d3.select(".tooltip")
           .style("left", window.innerWidth / 2 - this.width / 1 + "px")
           .style("top", y + window.innerHeight / 2 - this.height / 2.5 + "px")

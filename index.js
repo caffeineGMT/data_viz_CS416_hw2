@@ -122,10 +122,6 @@ class ToiletPaper {
       "#f69324", // orange
     ]);
 
-    this.tooltip = d3
-      .select(".tooltip")
-      .attr("transform", `translate(${this.width}, ${this.height})`);
-
     const squares = this.canvas
       .append("g")
       .attr("transform", `translate(${0}, ${5 * this.squareSize})`)
@@ -230,6 +226,18 @@ class ToiletPaper {
       .transition()
       .duration(1000)
       .attr("opacity", 1);
+    this.svg
+      .append("text")
+      .text(
+        "(The num of square represents the relative rankings between countries)"
+      )
+      .attr("id", "mainTextArea")
+      .attr("transform", `translate(${this.width / 20}, ${this.height / 1.1})`)
+      .style("font-size", this.squareSize * 1.5)
+      .attr("fill", "white")
+      .transition()
+      .duration(1000)
+      .attr("opacity", 1);
   };
 
   /**
@@ -280,15 +288,7 @@ class ToiletPaper {
       .transition()
       .duration(1000)
       .attr("opacity", 1);
-    // { Country: "US", Rolls: 141 },
-    // { Country: "Germany", Rolls: 134 },
-    // { Country: "UK", Rolls: 127 },
-    // { Country: "Japan", Rolls: 91 },
-    // { Country: "Australia", Rolls: 88 },
-    // { Country: "Spain", Rolls: 81 },
-    // { Country: "France", Rolls: 71 },
-    // { Country: "Italy", Rolls: 70 },
-    // { Country: "China", Rolls: 49 },
+
     d3.selectAll(".square")
       .on("mouseenter", (event, curData) => {
         d3.selectAll(".square")
@@ -332,10 +332,8 @@ class ToiletPaper {
         }
         const [x, y] = d3.pointer(event);
         d3.select(".tooltip")
-          .style("opacity", 1)
-          .style("x", x)
-          .style("y", y)
-          // .style("position", "absolute")
+          .style("left", window.innerWidth / 2 - this.width / 1.1 + "px")
+          .style("top", y + window.innerHeight / 2 - this.height / 2.5 + "px")
           .text(`${curData.Country} - ${mile} miles`);
       })
       .on("mouseout", function (event, curData) {
@@ -397,6 +395,16 @@ class ToiletPaper {
       .transition()
       .duration(1000)
       .attr("opacity", 1);
+    this.svg
+      .append("text")
+      .text("(Hover over to see num of toilet paper usage per capita per year)")
+      .attr("id", "mainTextArea")
+      .attr("transform", `translate(${this.width / 20}, ${this.height / 1.1})`)
+      .style("font-size", this.squareSize * 1.5)
+      .attr("fill", "white")
+      .transition()
+      .duration(1000)
+      .attr("opacity", 1);
 
     d3.selectAll(".square")
       .on("mouseenter", (event, curData) => {
@@ -422,9 +430,8 @@ class ToiletPaper {
             ? `US - ${numOfRolls} rolls`
             : `The rest of the 9 countries - ${numOfRolls} rolls`;
         d3.select(".tooltip")
-          .style("opacity", 1)
-          .style("left", x)
-          .style("top", y)
+          .style("left", window.innerWidth / 2 - this.width / 1 + "px")
+          .style("top", y + window.innerHeight / 2 - this.height / 2.5 + "px")
           .text(text);
       })
       .on("mouseout", function (event, curData) {
